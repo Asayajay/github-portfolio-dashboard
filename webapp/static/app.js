@@ -60,6 +60,7 @@ function render(body) {
   document.getElementById("stat-healthy").textContent = summary.fully_healthy_count;
   document.getElementById("stat-avg").textContent = `${summary.average_hygiene_percent}%`;
   document.getElementById("stat-issues").textContent = summary.total_open_issues;
+  document.getElementById("stat-stale").textContent = summary.stale_count;
 
   const canvas = document.getElementById("health-chart");
   drawHealthChart(
@@ -79,7 +80,7 @@ function render(body) {
         <td>${markCell(r.license_ok)}</td>
         <td>${markCell(r.readme_ok)}</td>
         <td>${markCell(r.gitignore_ok)}</td>
-        <td>${recencyLabel(r.days_since_last_commit)}</td>
+        <td>${recencyLabel(r.days_since_last_commit)}${r.is_stale ? " (stale)" : ""}</td>
         <td>${r.open_issue_count}</td>
       `;
       tbody.appendChild(tr);

@@ -72,3 +72,35 @@ def test_write_markdown_report_creates_timestamped_file(tmp_path):
     assert path.exists()
     assert path.name == "portfolio-report-20260820-000000.md"
     assert "a/healthy" in path.read_text()
+
+
+def stale():
+    from ghdash.health import compute_repo_health
+
+    return compute_repo_health(
+        full_name="a/stale",
+        root_files=["README.md", "LICENSE", ".gitignore"],
+        readme_content=REAL_README,
+        gitignore_content="__pycache__/\n.venv/\n.env\ndist/\n",
+        last_commit_date="2023-01-01T00:00:00Z",
+        open_issue_count=0,
+        now=FIXED_NOW,
+    )
+
+
+def test_cli_report_tags_stale_repo():
+    report = render_cli_report([stale()])
+    assert "a/stale" in report
+    assert "(stale)" in report
+
+
+def test_cli_report_does_not_tag_fresh_repo_as_stale():
+    report = render_cli_report([healthy()])
+    assert "(stale)" not in report
+
+
+def test_markdown_report_tags_stale_repo_in_table():
+    results = [stale()]
+    summary = summarize_portfolio(results)
+    markdown = render_markdown_report(results, summary, FIXED_NOW)
+    assert "(stale)" in markdown

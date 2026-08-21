@@ -28,15 +28,17 @@ def render_cli_report(results: list[RepoHealth]) -> str:
     lines = [
         f"Scanned {summary.repo_count} repos: {summary.fully_healthy_count} fully healthy "
         f"(all 3 hygiene checks), average hygiene {summary.average_hygiene_percent}%, "
-        f"{summary.total_open_issues} open issues total",
+        f"{summary.total_open_issues} open issues total, {summary.stale_count} stale "
+        f"(untouched 365+ days)",
         "",
     ]
 
     for result in sorted(results, key=lambda r: r.full_name.lower()):
+        stale_tag = " (stale)" if result.is_stale else ""
         lines.append(
             f"{_mark(result.hygiene_score == 3)} {result.full_name} "
             f"[{result.hygiene_score}/3] "
-            f"last commit {_recency_label(result.days_since_last_commit)}, "
+            f"last commit {_recency_label(result.days_since_last_commit)}{stale_tag}, "
             f"{result.open_issue_count} open issues"
         )
         for issue in result.hygiene_issues:
@@ -57,13 +59,17 @@ def render_markdown_report(
         f"Generated {generated_at.strftime('%Y-%m-%d %H:%M UTC')}",
         f"Scanned {summary.repo_count} repos: {summary.fully_healthy_count} fully healthy, "
         f"average hygiene {summary.average_hygiene_percent}%, "
-        f"{summary.total_open_issues} open issues total.",
+        f"{summary.total_open_issues} open issues total, {summary.stale_count} stale "
+        "(untouched 365+ days).",
         "",
         "| Repo | LICENSE | README | .gitignore | Last commit | Open issues |",
         "| --- | --- | --- | --- | --- | --- |",
     ]
 
     for result in sorted_results:
+        last_commit = _recency_label(result.days_since_last_commit)
+        if result.is_stale:
+            last_commit += " (stale)"
         lines.append(
             "| "
             + " | ".join(
@@ -72,7 +78,7 @@ def render_markdown_report(
                     _mark(result.license_ok),
                     _mark(result.readme_ok),
                     _mark(result.gitignore_ok),
-                    _recency_label(result.days_since_last_commit),
+                    last_commit,
                     str(result.open_issue_count),
                 ]
             )

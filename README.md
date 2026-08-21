@@ -71,7 +71,9 @@ Three checks, each worth one point out of three:
 Last commit date and open issue count are reported as plain information,
 not scored. A finished side project that hasn't been touched in eight months
 isn't unhealthy for that reason alone — it only matters alongside missing
-hygiene basics, which is what the score actually measures.
+hygiene basics, which is what the score actually measures. Repos untouched
+for 365+ days get an informational "stale" tag for the same reason: it's a
+signal worth seeing, not a penalty.
 
 One caveat worth knowing: GitHub's `open_issues_count` field counts open
 pull requests as well as issues. There's no separate "issues only" count in

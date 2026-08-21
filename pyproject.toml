@@ -1,0 +1,19 @@
+[project]
+name = "ghdash"
+version = "0.1.0"
+description = "Live GitHub repo health dashboard: issues, last commit, LICENSE/README/.gitignore completeness"
+requires-python = ">=3.10"
+
+[project.scripts]
+ghdash = "ghdash.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -1,1 +1,51 @@
-<!doctype html><html><head><title>placeholder</title></head><body>placeholder</body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GitHub portfolio dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>GitHub portfolio dashboard</h1>
+      <p>Live health check across every repo in the account: LICENSE, README, and .gitignore completeness, last commit date, and open issue count. Queried straight from the GitHub API on every refresh, not a saved snapshot.</p>
+    </header>
+
+    <form id="scan-form" class="controls">
+      <label>Account (blank = your own) <input type="text" name="owner" placeholder="e.g. octocat"></label>
+      <label class="checkbox"><input type="checkbox" name="include_forks"> Include forks</label>
+      <label class="checkbox"><input type="checkbox" name="include_archived"> Include archived</label>
+      <button type="submit" id="refresh-btn">Scan now</button>
+    </form>
+
+    <div id="status" class="status-line">Scanning...</div>
+
+    <div id="results" class="hidden">
+      <div class="stat-tiles">
+        <div class="tile"><div class="tile-value" id="stat-repo-count">-</div><div class="tile-label">repos scanned</div></div>
+        <div class="tile"><div class="tile-value" id="stat-healthy">-</div><div class="tile-label">fully healthy (3/3)</div></div>
+        <div class="tile"><div class="tile-value" id="stat-avg">-</div><div class="tile-label">avg hygiene</div></div>
+        <div class="tile"><div class="tile-value" id="stat-issues">-</div><div class="tile-label">open issues total</div></div>
+      </div>
+
+      <canvas id="health-chart" class="chart"></canvas>
+
+      <table class="breakdown" id="repo-table">
+        <thead>
+          <tr><th>Repo</th><th>LICENSE</th><th>README</th><th>.gitignore</th><th>Last commit</th><th>Open issues</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <footer>
+      <p>"Open issues" is GitHub's <code>open_issues_count</code>, which counts open pull requests too, not just issues. Hygiene score is LICENSE + README (30+ words of real body content) + .gitignore (covering the common junk categories) -- 3 checks, not weighted by anything else. A repo that hasn't been touched in a year isn't scored down for that alone.</p>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='chart.js') }}"></script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
